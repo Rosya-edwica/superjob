@@ -1,0 +1,7 @@
+asyncio
+aiohttp
+aiomysql
+pymysql
+requests
+beautifulSoup4
+yaml
