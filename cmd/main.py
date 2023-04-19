@@ -1,5 +1,4 @@
-from mysqldb import get_cities
-from mysqldb import get_positions
+from mysqldb import get_cities, get_positions, update_position_status
 from models import City, Position
 
 from scraper.tools import get_vacancies_count, create_query
@@ -9,8 +8,10 @@ VACANCY_ON_CITY_LIMIT = 2_000
 
 def main():
     positions = get_positions()
+    if len(positions) == 0: exit("Профессий для парсинга нет")
     for position in positions:
         find_position(position)
+        update_position_status(position.Id)
 
 def find_position(position: Position):
     url = create_query(position.Title)
