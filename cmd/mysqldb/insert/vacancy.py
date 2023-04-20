@@ -1,6 +1,7 @@
 import aiomysql
 from models import Vacancy
 import yaml
+import logging
 
 async def connect():
     yml_data = get_yml_data()
@@ -28,8 +29,8 @@ async def save_vacancy(v: Vacancy):
         async with connection.cursor() as cursor:
             await cursor.execute(query)
             await connection.commit()
-            print(f"Успешно сохранили вакансию: {v.Id}")
+            logging.info(f"Успешно сохранили вакансию: {v.Id}")
     except BaseException as err:
-        print(f"Ошибка при сохранении вакансии: {err}")
+        logging.error(f"Ошибка при сохранении вакансии: {err}")
     finally:
         connection.close()

@@ -4,11 +4,14 @@ import requests
 from urllib.parse import urlencode
 
 import aiohttp
+import logging
 
 def get_soup(url: str) -> BeautifulSoup:
-    r = requests.get(url)
-    return BeautifulSoup(r.text, 'lxml')
-
+    try:
+        r = requests.get(url)
+        return BeautifulSoup(r.text, 'lxml')
+    except requests.exceptions.ConnectionError as err:
+        exit(err.args)
 
 async def aio_get_soup(url: str) -> BeautifulSoup:
     async with aiohttp.ClientSession() as session:
@@ -23,7 +26,7 @@ def get_vacancies_count(url: str):
         count_block = soup.find("div", class_="_3-q4I _4J5rK X5K3U _3lgWg")
         count = int(re.findall("\d+", count_block.text)[0])
     except BaseException as err:
-        print(f"Ошибка при подсчете вакансий: {err}")
+        logging.error(f"[Ошибка] Не смогли посчитать вакансии: {err}")
     finally:
         return count    
     
@@ -45,7 +48,7 @@ def get_pages_count(url: str) -> int:
         soup = get_soup(url)
         count = int(soup.find("div", class_="_3-q4I _9mI07 oSSgx _3SNg7 _364xK _1ApxH _3ybL_").find_all("a")[-2].text)
     except BaseException as err:
-        print(f"Ошибка при подсчете количества страниц: {err} {url}")
+        logging.error(f"[Ошибка] Не смогли посчитать страницы: {err} {url}")
     finally:
         return count
     

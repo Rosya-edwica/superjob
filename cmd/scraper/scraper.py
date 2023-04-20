@@ -1,5 +1,6 @@
 import re
 from bs4 import BeautifulSoup
+import logging
 
 import asyncio
 
@@ -18,6 +19,7 @@ class Scraper:
         url = tools.create_query(self.position.Title, self.defaultCity.Abbr)    
         pages_count = tools.get_pages_count(url)
         for page in range(pages_count):
+            logging.info(f"Парсим страницу {page+1}:{pages_count}")
             asyncio.run(self.parse_page(f"{url}&page={page}"))
 
 
@@ -45,7 +47,7 @@ class Scraper:
             await save_vacancy(vacancy)
 
         except BaseException as err:
-            print(f"Ошибка при разборе вакансии:\nUrl:{url}\nErr:{err}")
+            logging.error(f"Ошибка при разборе вакансии:\nUrl:{url}\nErr:{err}")
             return None
         return vacancy
     
